@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Игра "Своя игра"</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      width: 95%;
+      max-width: 1300px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .timer {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 15px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      flex: 1;
+    }
+
+    .timer input {
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid white;
+      color: white;
+      font-size: 1rem;
+      text-align: center;
+      margin: 5px 0;
+      outline: none;
+      width: 100%;
+    }
+
+    .timer button {
+      background: #6a11cb;
+      color: white;
+      font-size: 0.9rem;
+      font-weight: bold;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.3s ease;
+      margin: 5px;
+    }
+
+    .timer button:hover {
+      background: #4e0b9b;
+      transform: scale(1.1);
+    }
+
+    .players {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .player {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 10px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      flex: 1 1 calc(12% - 10px);
+      min-width: 120px;
+    }
+
+    .player:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .player input {
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid white;
+      color: white;
+      font-size: 0.8rem;
+      text-align: center;
+      margin: 5px 0;
+      outline: none;
+      width: 100%;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 5px;
+      margin-top: 5px;
+    }
+
+    .controls button {
+      background: #6a11cb;
+      color: white;
+      font-size: 0.8rem;
+      font-weight: bold;
+      padding: 3px 6px;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.3s ease;
+    }
+
+    .controls button:hover {
+      background: #4e0b9b;
+      transform: scale(1.1);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 15px;
+    }
+
+    .cell {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      padding: 15px;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .cell:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .category-cell {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .value-button {
+      display: block;
+      background: #6a11cb;
+      color: white;
+      font-size: 1.1rem;
+      font-weight: bold;
+      padding: 10px;
+      border: none;
+      border-radius: 10px;
+      margin: 5px auto;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.3s ease;
+    }
+
+    .value-button:hover {
+      background: #4e0b9b;
+      transform: scale(1.1);
+    }
+
+    .question-view {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 40px;
+      text-align: center;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      position: relative;
+    }
+
+    .question-view h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+
+    .question-view p {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+    }
+
+    .question-view img {
+      max-width: 100%;
+      border-radius: 15px;
+      margin-bottom: 20px;
+    }
+
+    .answer-button {
+      background: #4caf50;
+      color: white;
+      font-size: 1.2rem;
+      font-weight: bold;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.3s ease;
+    }
+
+    .answer-button:hover {
+      background: #388e3c;
+      transform: scale(1.1);
+    }
+
+    .back-button {
+      background: #6a11cb;
+      color: white;
+      font-size: 1.2rem;
+      font-weight: bold;
+      padding: 15px 30px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.3s ease;
+    }
+
+    .back-button:hover {
+      background: #4e0b9b;
+      transform: scale(1.1);
+    }
+
+    @media (max-width: 768px) {
+      .header {
+        flex-direction: column;
+      }
+
+      .players {
+        flex-direction: column;
+      }
+
+      .player {
+        flex: 1 1 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <!-- Header with Timers and Players -->
+    <div class="header">
+      <!-- Timer 1 (Left) -->
+      <div class="timer">
+        <input type="number" id="timer1-input" value="60" min="0" />
+        <div>
+          <button id="start-timer1">Старт</button>
+          <button id="stop-timer1">Стоп</button>
+        </div>
+        <p id="timer1-display">60 сек</p>
+      </div>
+
+      <!-- Players section -->
+      <div class="players" id="players"></div>
+
+      <!-- Timer 2 (Right) -->
+      <div class="timer">
+        <input type="number" id="timer2-input" value="30" min="0" />
+        <div>
+          <button id="start-timer2">Старт</button>
+          <button id="stop-timer2">Стоп</button>
+        </div>
+        <p id="timer2-display">30 сек</p>
+      </div>
+    </div>
+
+    <!-- Main game grid -->
+    <div id="grid" class="grid">
+      <!-- Grid will be dynamically generated here -->
+    </div>
+
+    <!-- Question view -->
+    <div id="question-view" class="question-view" style="display: none;">
+      <h2 id="question-header"></h2>
+      <p id="question-text"></p>
+      <img id="question-image" style="display: none;" />
+      <button id="show-answer-button" class="answer-button">Показать ответ</button>
+      <p id="answer-text" style="display: none; font-size: 1.5rem; margin-top: 20px;"></p>
+      <img id="answer-image" style="display: none; margin-top: 20px; max-width: 100%; border-radius: 15px;" />
+      <button id="back-button" class="back-button" style="margin-top: 20px;">Вернуться к сетке</button>
+    </div>
+  </div>
+
+  <script>
+    const questionsData = [
+      {
+        category: "Страны и их деньги",
+        questions: [
+          { value: 100, text: "Назовите страну по ее банкноте 2004 года", answer: "Япония", image: "Фото к вопросам/2.png" },
+          { value: 200, text: 'В этой известной стране с августа по ноябрь 1923 года цены выросли в 850 тыс. раз. Всему виной гиперинфляция в результате почти пустого бюджета в то время. Назовите страну.', answer: "Германия", image: "Фото к вопросам/1.png" },
+          { value: 300, text: 'В этой стране принято дарить на праздниках – деньги в конверте. Назовите ее', answer: "Китай" },
+          { value: 400, text: 'Перед вами представлена карта мира с восемью точками стран. Попробуйте угадать – за какой точкой скрывается страна, которая самой первой приняла биткоин как официальное платежное средство на территории.', answer: "4) Сальвадор", image: "Фото к вопросам/2.png" },
+        ],
+      },
+      {
+        category: "Интерес накопления",
+        questions: [
+          { value: 100, answer: "1 – АБ, 2 – ВГД", image: "Фото к вопросам/7.png", imageanswer: "Фото к вопросам/8.png" },
+          { value: 200, text: 'Перед вами формула сложного процента с пропущенным важным элементом. Назовите его', answer: "Present Value - начальная стоимость", image: "Фото к вопросам/5.png", imageanswer: "Фото к вопросам/4.png" },
+          { value: 300, text: 'Самый древний инвестиционный актив', answer: "Золото" },
+          { value: 400, text: 'Через сколько лет после начала действия договора программы долгосрочных сбережений участник может получить выплаты, если не достиг пенсионного возраста?', answer: "15 лет" },
+        ],
+      },
+      {
+        category: "Берлога мошенников",
+        questions: [
+          { value: 100, text: "Мошенники активно могут делать фальшивые видео через искусственный интеллект. Давайте проверим себя. Найдите из перечисленных вариантов ответа – настоящее видео", answer: "Вариант Б) Рыбак встретил кенгуру в степи", image: "Фото к вопросам/11.png" },
+          { value: 200, text: "С английского, этот вид мошенничества переводится как «выуживание» или «рыбная ловля»", answer: "Фишинг" },
+          { value: 300, text: "Назовите не менее трех разных сценариев, которые используются мошенниками в социальной инженерии для обмана жертв.", answer: "На усмотрение ведущего" },
+          { value: 400, text: "Конкретно укажите признак, по которому ТОЧНО можно понять, что это сообщение от мошенников ", answer: "Адрес адресанта", image: "Фото к вопросам/9.png", },
+        ],
+      },
+      {
+        category: "Словарь финграмотности",
+        questions: [
+          { value: 100, text: "Расшифруйте аббревиатуру «ИИС»", answer: "Индивидуальный инвестиционный счет" },
+          { value: 200, text: "Анаграмма — это слово, составленное путём перестановки букв. Расшифруйте анаграмму «ИЛЯНИЗЕЦ», чтобы получить термин, который всегда надо проверять", answer: "Лицензия" },
+          { value: 300, text: "ЕНОТ нужен, чтобы быть готовы к кризису, увольнению, ремонту или большим покупкам. ЕНОТ дает уверенность в будущем и защищает от непредвиденных ситуаций. ЕНОТ как резерв должен быть рассчитан в идеале на 3-6 месяцев. Какой термин мы заменили «енотом»?", answer: "Финансовая подушка" },
+          { value: 400, text: "С древнегреческого это слово сначала означало «подставку» или «подпорку». Со временем его смысл сместился к «предупреждению» и «залогу». Сегодня это — известный термин в сфере финансовой грамотности. Что это за слово?", answer: "Ипотека" },
+        ],
+      },
+      {
+        category: "Логический расчет",
+        questions: [
+          { value: 100, text: "Вася взял 500 копеек, 150 копеек отдал маме, а 450 копеек взял из копилки. Сколько всего рублей у него осталось?", answer: "8 рублей (800 копеек = 8 рублей)" },
+          { value: 200, text: "Книга и блокнот вместе стоят 350 рублей. Книга стоит на 300 рублей дороже блокнота. Сколько стоит блокнот?", answer: "25 рублей" },
+          { value: 300, answer: "Перевернуть/подойти с другой стороны", image: "Фото к вопросам/12.png", imageanswer: "Фото к вопросам/13.png" },
+          { value: 400, text: "Перед вами формула. Попробуйте предположить, что именно находят благодаря ей.", answer: "Срок удвоения вклада", image: "Фото к вопросам/6.png" },
+        ],
+      },
+    ];
+
+    const playersContainer = document.getElementById("players");
+    const gridContainer = document.getElementById("grid");
+    const questionView = document.getElementById("question-view");
+    const questionHeader = document.getElementById("question-header");
+    const questionText = document.getElementById("question-text");
+    const questionImage = document.getElementById("question-image");
+    const answerText = document.getElementById("answer-text");
+    const answerImage = document.getElementById("answer-image");
+    const showAnswerButton = document.getElementById("show-answer-button");
+    const backButton = document.getElementById("back-button");
+
+    const timer1Input = document.getElementById("timer1-input");
+    const timer1Display = document.getElementById("timer1-display");
+    const startTimer1Button = document.getElementById("start-timer1");
+    const stopTimer1Button = document.getElementById("stop-timer1");
+
+    const timer2Input = document.getElementById("timer2-input");
+    const timer2Display = document.getElementById("timer2-display");
+    const startTimer2Button = document.getElementById("start-timer2");
+    const stopTimer2Button = document.getElementById("stop-timer2");
+
+    let selectedQuestion = null;
+    let timer1Interval = null;
+    let timer2Interval = null;
+
+    // Generate player panels
+    const playerCount = 8;
+    const players = [];
+
+    for (let i = 1; i <= playerCount; i++) {
+      const playerDiv = document.createElement("div");
+      playerDiv.classList.add("player");
+
+      const teamNameInput = document.createElement("input");
+      teamNameInput.type = "text";
+      teamNameInput.placeholder = `Команда ${i}`;
+      teamNameInput.style.fontSize = "0.8rem";
+      playerDiv.appendChild(teamNameInput);
+
+      const scoreInput = document.createElement("input");
+      scoreInput.type = "number";
+      scoreInput.value = 0;
+      scoreInput.min = null;
+      scoreInput.style.textAlign = "center";
+      scoreInput.style.fontSize = "0.8rem";
+      playerDiv.appendChild(scoreInput);
+
+      const controlsDiv = document.createElement("div");
+      controlsDiv.classList.add("controls");
+
+      const addButton = document.createElement("button");
+      addButton.textContent = "+";
+      addButton.addEventListener("click", () => updateScore(i - 1, true));
+      controlsDiv.appendChild(addButton);
+
+      const subtractButton = document.createElement("button");
+      subtractButton.textContent = "-";
+      subtractButton.addEventListener("click", () => updateScore(i - 1, false));
+      controlsDiv.appendChild(subtractButton);
+
+      playerDiv.appendChild(controlsDiv);
+
+      playersContainer.appendChild(playerDiv);
+
+      players.push({ scoreInput });
+    }
+
+    function updateScore(playerIndex, isAdd) {
+      if (!selectedQuestion) return;
+
+      const scoreElement = players[playerIndex].scoreInput;
+      let currentScore = parseInt(scoreElement.value) || 0;
+      const questionValue = selectedQuestion.value;
+
+      if (isAdd) {
+        currentScore += questionValue;
+      } else {
+        currentScore -= questionValue;
+      }
+
+      scoreElement.value = currentScore;
+    }
+
+    // Timer 1 functionality
+    function updateTimer1Display() {
+      timer1Display.textContent = `${timer1Input.value} сек`;
+    }
+
+    function startTimer1() {
+      // Сбросить, если уже идёт
+      if (timer1Interval) {
+        clearInterval(timer1Interval);
+        timer1Interval = null;
+      }
+
+      let timeLeft = 30; // Жёстко задаём 30 секунд
+      timer1Input.value = timeLeft;
+      updateTimer1Display();
+
+      timer1Interval = setInterval(() => {
+        timeLeft--;
+        timer1Input.value = timeLeft;
+        updateTimer1Display();
+
+        if (timeLeft <= 0) {
+          clearInterval(timer1Interval);
+          timer1Interval = null;
+        }
+      }, 1000);
+    }
+
+
+
+    function stopTimer1() {
+      if (timer1Interval) {
+        clearInterval(timer1Interval);
+        timer1Interval = null;
+      }
+    }
+
+    timer1Input.addEventListener("input", () => {
+      updateTimer1Display();
+    });
+
+    startTimer1Button.addEventListener("click", () => {
+      if (timer2Interval) return; // Don't start if Timer 2 is running
+      startTimer1();
+    });
+
+    stopTimer1Button.addEventListener("click", () => {
+      stopTimer1();
+    });
+
+    // Timer 2 functionality
+    function updateTimer2Display() {
+      timer2Display.textContent = `${timer2Input.value} сек`;
+    }
+
+    function startTimer2() {
+      // Сбросить, если уже идёт
+      if (timer2Interval) {
+        clearInterval(timer2Interval);
+        timer2Interval = null;
+      }
+
+      stopTimer1(); // Остановить таймер 1, если он работает
+
+      let timeLeft = 20; // Жёстко задаём 20 секунд
+      timer2Input.value = timeLeft;
+      updateTimer2Display();
+
+      timer2Interval = setInterval(() => {
+        timeLeft--;
+        timer2Input.value = timeLeft;
+        updateTimer2Display();
+
+        if (timeLeft <= 0) {
+          clearInterval(timer2Interval);
+          timer2Interval = null;
+        }
+      }, 1000);
+    }
+
+
+
+    function stopTimer2() {
+      if (timer2Interval) {
+        clearInterval(timer2Interval);
+        timer2Interval = null;
+      }
+    }
+
+    timer2Input.addEventListener("input", () => {
+      updateTimer2Display();
+    });
+
+    startTimer2Button.addEventListener("click", () => {
+      startTimer2();
+    });
+
+    stopTimer2Button.addEventListener("click", () => {
+      stopTimer2();
+    });
+
+    // Generate grid dynamically
+    questionsData.forEach((category, index) => {
+      const categoryCell = document.createElement("div");
+      categoryCell.classList.add("cell", "category-cell");
+      categoryCell.textContent = category.category;
+      gridContainer.appendChild(categoryCell);
+
+      category.questions.forEach((question) => {
+        const valueCell = document.createElement("div");
+        valueCell.classList.add("cell");
+
+        const button = document.createElement("button");
+        button.textContent = question.value;
+        button.classList.add("value-button");
+        button.addEventListener("click", () => {
+          selectQuestion(category.category, question, button);
+          stopTimer2(); // Stop Timer 2 if running
+          startTimer1(); // Start Timer 1 automatically
+        });
+        valueCell.appendChild(button);
+
+        gridContainer.appendChild(valueCell);
+      });
+    });
+
+    function selectQuestion(category, question, button) {
+      if (selectedQuestion === question) return;
+
+      selectedQuestion = question;
+      button.disabled = true;
+      button.style.backgroundColor = "#ccc";
+      button.style.color = "#000";
+      button.style.cursor = "not-allowed";
+
+      showQuestion(category, question);
+    }
+
+    function showQuestion(category, question) {
+      gridContainer.style.display = "none";
+      questionView.style.display = "block";
+
+      questionHeader.textContent = `${category} за ${question.value}`;
+      questionText.textContent = question.text;
+
+      if (question.image) {
+        questionImage.src = question.image;
+        questionImage.style.display = "block";
+      } else {
+        questionImage.style.display = "none";
+      }
+
+      answerText.style.display = "none";
+      answerText.textContent = `Ответ: ${question.answer}`;
+
+      if (question.imageanswer) {
+        answerImage.src = question.imageanswer;
+        answerImage.style.display = "block";
+      } else {
+        answerImage.style.display = "none";
+      }
+      answerImage.style.display = "none";
+
+      showAnswerButton.onclick = () => {
+        answerText.style.display = "block";
+        if (question.imageanswer) {
+          answerImage.style.display = "block";
+        }
+      };
+    }
+
+    backButton.addEventListener("click", () => {
+      gridContainer.style.display = "grid";
+      questionView.style.display = "none";
+      answerText.style.display = "none";
+      answerImage.style.display = "none";
+    });
+
+    // Initialize timer displays
+    updateTimer1Display();
+    updateTimer2Display();
+  </script>
+</body>
+
+</html>
